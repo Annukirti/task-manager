@@ -3,7 +3,7 @@ import { SessionEntity } from "./session.entity";
 import jwt from "jsonwebtoken";
 import { config } from "../../config/configuration";
 
-export class SessionService {
+class SessionService {
   constructor(
     private sessionRepository = AppDataSource.getRepository(SessionEntity)
   ) {}
@@ -48,3 +48,5 @@ export class SessionService {
     return "Session Deleted successfully";
   }
 }
+
+export const sessionService = new SessionService();

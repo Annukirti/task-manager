@@ -14,20 +14,25 @@ export const authenticate = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
+): Promise<void> => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) {
-    return res.status(401).send("Unauthorized");
+    // res.status(401).send("Unauthorized");
+    // return;
+    throw new Error("Unauthorized");
   }
+
   try {
     const decoded = jwt.verify(token, config.jwt.secret) as any;
     const sessionRepository = AppDataSource.getRepository(SessionEntity);
     const session = await sessionRepository.findOne({ where: { token } });
     if (!session) {
-      return res.status(401).send("Session expired");
+      // res.status(401).send("Session expired");
+      // return;
+      throw new Error("Session expired");
     }
     (req as AuthenticatedRequest).user = decoded.userId;
-    (req as AuthenticatedRequest).organization = session.current_organization;
+    (req as AuthenticatedRequest).organization = session.currentOrganization;
     next();
   } catch (error: any) {
     res.status(401).send(`Invalid token: ${error}`);

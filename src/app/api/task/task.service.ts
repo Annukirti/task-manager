@@ -1,7 +1,7 @@
 import { AppDataSource } from "../../database/datasource";
 import { TaskEntity } from "./task.entity";
 
-export class TaskService {
+class TaskService {
   constructor(
     private taskRepository = AppDataSource.getRepository(TaskEntity)
   ) {}
@@ -26,3 +26,5 @@ export class TaskService {
     return await this.taskRepository.delete({ id });
   }
 }
+
+export const taskService = new TaskService();

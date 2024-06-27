@@ -3,9 +3,8 @@ import { UserOrganizationEntity } from "../user/user-organization.entity";
 import { UserEntity } from "../user/user.entity";
 import { OrganizationEntity } from "./organization.entity";
 
-export class OrganizationService {
+class OrganizationService {
   constructor(
-    private userRepository = AppDataSource.getRepository(UserEntity),
     private organizationRepository = AppDataSource.getRepository(
       OrganizationEntity
     ),
@@ -48,3 +47,5 @@ export class OrganizationService {
     await this.organizationRepository.delete(id);
   }
 }
+
+export const organizationService = new OrganizationService();

@@ -2,12 +2,11 @@ import { AppDataSource } from "../../database/datasource";
 import bcrypt from "bcryptjs";
 import { UserEntity } from "./user.entity";
 import { User } from "../../common";
-import { SessionService } from "../session/session.service";
+import { sessionService } from "../session/session.service";
 
-export class UserService {
+class UserService {
   constructor(
-    private userRepository = AppDataSource.getRepository(UserEntity),
-    private sessionService = new SessionService()
+    private userRepository = AppDataSource.getRepository(UserEntity)
   ) {}
 
   async createUser(userDto: User) {
@@ -22,13 +21,14 @@ export class UserService {
       ...userDto,
       password: hashedPassword,
     });
-    return this.sessionService.createSession(user.id);
+    return sessionService.createSession(user.id);
   }
 
   async login(email: string, password: string) {
     const user = await this.userRepository.findOne({ where: { email } });
     if (user && (await bcrypt.compare(password, user.password))) {
-      return this.sessionService.createSession(user.id);
+      sessionService.deleteUserSessions(user.id);
+      return sessionService.createSession(user.id);
     } else {
       throw new Error("Invalid credentials");
     }
@@ -50,3 +50,5 @@ export class UserService {
     return await this.userRepository.delete({ id });
   }
 }
+
+export const userService = new UserService();

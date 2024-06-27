@@ -29,8 +29,8 @@ export class SessionEntity implements Session {
 
   @ManyToOne(() => OrganizationEntity)
   @JoinColumn({ name: "current_organization_id" })
-  current_organization: OrganizationEntity;
+  currentOrganization: OrganizationEntity;
 
   @Column()
-  expires_at: Date;
+  expiresAt: Date;
 }

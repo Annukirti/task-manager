@@ -1,24 +1,31 @@
 import { Request, Response } from "express";
+import { UserService } from "./user.service";
 
 class UserController {
-  getUser(req: Request, res: Response) {
-    res.send("Hello, I am a GET user API!");
-  }
+  constructor(private userService = new UserService()) {}
 
   createUser(req: Request, res: Response) {
-    res.send("Hello, I am a POST user API!");
+    return this.userService.createUser(req.body);
+  }
+
+  login(req: Request, res: Response) {
+    const { email, password } = req.body;
+    return this.userService.login(email, password);
+  }
+  getUsers(req: Request, res: Response) {
+    return this.userService.getUsers();
   }
 
   getUserById(req: Request, res: Response) {
-    res.send("Hello, I am a GET user BY ID API!");
+    return this.userService.getUserById(+req.params.id);
   }
 
   updateUserById(req: Request, res: Response) {
-    res.send("Hello, I am a UPDATE user API!");
+    return this.userService.updateUserById(+req.params.id, req.body);
   }
 
   deleteUserById(req: Request, res: Response) {
-    res.send("Hello, I am a DELETE user API!");
+    return this.userService.deleteUserById(+req.params.id);
   }
 }
 

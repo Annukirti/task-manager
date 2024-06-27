@@ -5,6 +5,6 @@ export interface Session {
   id: number;
   user: User;
   token: string;
-  current_organization: Organization;
-  expires_at: Date;
+  currentOrganization: Organization;
+  expiresAt: Date;
 }

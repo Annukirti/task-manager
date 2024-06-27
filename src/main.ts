@@ -2,6 +2,7 @@ import express from "express";
 import { AppDataSource } from "./app/database/datasource";
 import { config } from "./app/config/configuration";
 import { apiRouter } from "./app/api/api.module";
+import bodyParser from "body-parser";
 
 const app = express();
 
@@ -14,6 +15,7 @@ AppDataSource.initialize()
   .catch((error) => console.log(error));
 
 app.use(express.json());
+app.use(bodyParser.json());
 
 // Routes
 app.use(`/${config.server.apiPrefix}`, apiRouter);

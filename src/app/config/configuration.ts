@@ -14,4 +14,8 @@ export const config = {
     password: process.env.API_DB_PASSWORD || "admin",
     database: process.env.API_DB_NAME || "task-manager-db",
   },
+  jwt: {
+    secret: process.env.SECRET_KEY || "SECRET_KEY",
+    expiresTime: process.env.EXPIRES_TIME || "1h",
+  },
 };

@@ -11,7 +11,9 @@ export class OrganizationEntity implements Organization {
   @Column({ unique: true })
   name: string;
 
-  @OneToMany(() => UserOrganizationEntity, (userOrg) => userOrg.organization)
+  @OneToMany(() => UserOrganizationEntity, (userOrg) => userOrg.organization, {
+    cascade: true,
+  })
   userOrganizations: UserOrganizationEntity[];
 
   @OneToMany(() => TaskEntity, (task) => task.organization)

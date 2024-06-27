@@ -1,24 +1,38 @@
 import { Request, Response } from "express";
+import { OrganizationService } from "./organization.service";
 
 class OrganizationController {
-  getUser(req: Request, res: Response) {
-    res.send("Hello, I am a GET user API!");
+  constructor(private organizationService = new OrganizationService()) {}
+
+  getOrganizations(req: Request, res: Response) {
+    return this.organizationService.getOrganizations();
   }
 
-  createUser(req: Request, res: Response) {
-    res.send("Hello, I am a POST user API!");
+  createOrganization(req: Request, res: Response) {
+    const createOrganizationDto = req.body;
+    return this.organizationService.createOrganization(createOrganizationDto);
   }
 
-  getUserById(req: Request, res: Response) {
-    res.send("Hello, I am a GET user BY ID API!");
+  getOrganizationById(req: Request, res: Response) {
+    return this.organizationService.getOrganizationById(+req.params.id);
   }
 
-  updateUserById(req: Request, res: Response) {
-    res.send("Hello, I am a UPDATE user API!");
+  addUserToOrganization(req: Request, res: Response) {
+    let orgId = +req.params.id;
+    let userId = req.body;
+    return this.organizationService.addUserToOrganization(orgId, userId);
   }
 
-  deleteUserById(req: Request, res: Response) {
-    res.send("Hello, I am a DELETE user API!");
+  updateOrganizationById(req: Request, res: Response) {
+    const updateOrganizationDto = req.body;
+    return this.organizationService.updateOrganizationById(
+      +req.params.id,
+      updateOrganizationDto
+    );
+  }
+
+  deleteOrganizationById(req: Request, res: Response) {
+    return this.organizationService.deleteOrganizationById(+req.params.id);
   }
 }
 

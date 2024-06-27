@@ -3,14 +3,16 @@ import { organizationController } from "./organization.controller";
 
 const router: Router = Router();
 
-router.get("/", organizationController.getUser);
+router.get("/", organizationController.getOrganizations);
 
-router.get("/:id", organizationController.getUserById);
+router.get("/:id", organizationController.getOrganizationById);
 
-router.post("", organizationController.createUser);
+router.post("", organizationController.createOrganization);
 
-router.put("/:id", organizationController.updateUserById);
+router.post("/:id", organizationController.addUserToOrganization);
 
-router.delete("/:id", organizationController.deleteUserById);
+router.put("/:id", organizationController.updateOrganizationById);
+
+router.delete("/:id", organizationController.deleteOrganizationById);
 
 export const organizationRoutes = router;

@@ -6,5 +6,5 @@ export interface Task {
   title: string;
   description: string;
   organization: Organization;
-  assigned_to: User;
+  assignedTo: User;
 }

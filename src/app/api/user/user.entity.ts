@@ -23,6 +23,6 @@ export class UserEntity implements User {
   @OneToMany(() => UserOrganizationEntity, (userOrg) => userOrg.user)
   userOrganizations: UserOrganizationEntity[];
 
-  @OneToMany(() => TaskEntity, (task) => task.assigned_to)
+  @OneToMany(() => TaskEntity, (task) => task.assignedTo)
   tasks: TaskEntity[];
 }

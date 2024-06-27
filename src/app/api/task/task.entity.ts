@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from "typeorm";
 import { Task } from "../../common/interfaces";
 import { OrganizationEntity } from "../organization/organization.entity";
 import { UserEntity } from "../user/user.entity";
@@ -15,8 +21,16 @@ export class TaskEntity implements Task {
   description: string;
 
   @ManyToOne(() => OrganizationEntity, (organization) => organization.tasks)
+  @JoinColumn({ name: "organization_id" })
   organization: OrganizationEntity;
 
+  @Column({ name: "organization_id", type: "bigint", nullable: true })
+  organizationId?: number;
+
+  @Column({ name: "assigned_to_id", type: "bigint", nullable: true })
+  assignedToId?: number;
+
   @ManyToOne(() => UserEntity, (user) => user.tasks)
-  assigned_to: UserEntity;
+  @JoinColumn({ name: "assigned_to_id" })
+  assignedTo: UserEntity;
 }

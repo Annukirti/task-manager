@@ -1,24 +1,27 @@
 import { Request, Response } from "express";
+import { TaskService } from "./task.service";
 
 class TaskController {
-  getUser(req: Request, res: Response) {
-    res.send("Hello, I am a GET user API!");
+  constructor(private taskService = new TaskService()) {}
+
+  getTasks(req: Request, res: Response) {
+    return this.taskService.getTasks();
   }
 
-  createUser(req: Request, res: Response) {
-    res.send("Hello, I am a POST user API!");
+  createTask(req: Request, res: Response) {
+    return this.taskService.createTask(req.body);
   }
 
-  getUserById(req: Request, res: Response) {
-    res.send("Hello, I am a GET user BY ID API!");
+  getTaskById(req: Request, res: Response) {
+    return this.taskService.getTaskById(+req.params.id);
   }
 
-  updateUserById(req: Request, res: Response) {
-    res.send("Hello, I am a UPDATE user API!");
+  updateTaskById(req: Request, res: Response) {
+    return this.taskService.updateTaskById(+req.params.id, req.body);
   }
 
-  deleteUserById(req: Request, res: Response) {
-    res.send("Hello, I am a DELETE user API!");
+  deleteTaskById(req: Request, res: Response) {
+    return this.taskService.deleteTaskById(+req.params.id);
   }
 }
 

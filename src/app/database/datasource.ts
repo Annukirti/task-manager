@@ -9,7 +9,6 @@ export const AppDataSource = new DataSource({
   username: config.database.username || "postgres",
   password: config.database.password || "admin",
   database: config.database.database || "task-manager-db",
-  // schema: process.env.API_SCHEMA_NAME || "smartirb",
   synchronize: true,
   logging: true,
   entities: [join(__dirname, "../api/**/*.entity{.ts,.js}")],

@@ -2,6 +2,7 @@ import { AppDataSource } from "../../database/datasource";
 import { SessionEntity } from "./session.entity";
 import jwt from "jsonwebtoken";
 import { config } from "../../config/configuration";
+import { ResponseError } from "../../common/utils/error.utils";
 
 class SessionService {
   constructor(
@@ -37,7 +38,7 @@ class SessionService {
       await this.sessionRepository.save(session);
       return "Organization switched successfully";
     } else {
-      return "Session not found";
+      return Promise.reject(new ResponseError(401, "Session not found", 4011));
     }
   }
 

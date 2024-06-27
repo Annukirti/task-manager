@@ -1,25 +1,40 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { taskService } from "./task.service";
 
 class TaskController {
-  getTasks(req: Request, res: Response) {
-    return taskService.getTasks();
+  getTasks(req: Request, res: Response, next: NextFunction) {
+    taskService
+      .getTasks()
+      .then((result) => res.success("Tasks fetched Successfully", result))
+      .catch(next);
   }
 
-  createTask(req: Request, res: Response) {
-    return taskService.createTask(req.body);
+  createTask(req: Request, res: Response, next: NextFunction) {
+    taskService
+      .createTask(req.body)
+      .then((result) => res.success("Task Created Successfully", result))
+      .catch(next);
   }
 
-  getTaskById(req: Request, res: Response) {
-    return taskService.getTaskById(+req.params.id);
+  getTaskById(req: Request, res: Response, next: NextFunction) {
+    taskService
+      .getTaskById(+req.params.id)
+      .then((result) => res.success("Task fetched Successfully", result))
+      .catch(next);
   }
 
-  updateTaskById(req: Request, res: Response) {
-    return taskService.updateTaskById(+req.params.id, req.body);
+  updateTaskById(req: Request, res: Response, next: NextFunction) {
+    taskService
+      .updateTaskById(+req.params.id, req.body)
+      .then((result) => res.success("Task Updated Successfully", result))
+      .catch(next);
   }
 
-  deleteTaskById(req: Request, res: Response) {
-    return taskService.deleteTaskById(+req.params.id);
+  deleteTaskById(req: Request, res: Response, next: NextFunction) {
+    taskService
+      .deleteTaskById(+req.params.id)
+      .then((result) => res.success("Task Deleted Successfully", result))
+      .catch(next);
   }
 }
 

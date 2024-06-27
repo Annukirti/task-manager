@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { UserEntity } from "./user.entity";
 import { User } from "../../common";
 import { sessionService } from "../session/session.service";
+import { ResponseError } from "../../common/utils/error.utils";
 
 class UserService {
   constructor(
@@ -14,7 +15,9 @@ class UserService {
       where: { email: userDto.email },
     });
     if (userExist) {
-      throw new Error("User already exists.");
+      return Promise.reject(
+        new ResponseError(401, "User already exists", 4011)
+      );
     }
     const hashedPassword = await bcrypt.hash(userDto.password, 10);
     const user = await this.userRepository.save({
@@ -30,7 +33,9 @@ class UserService {
       sessionService.deleteUserSessions(user.id);
       return sessionService.createSession(user.id);
     } else {
-      throw new Error("Invalid credentials");
+      return Promise.reject(
+        new ResponseError(401, "Invalid credentials", 4011)
+      );
     }
   }
 

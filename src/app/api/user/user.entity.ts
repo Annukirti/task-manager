@@ -3,7 +3,6 @@ import { UserOrganizationEntity } from "./user-organization.entity";
 import { User } from "../../common/interfaces";
 import { TaskEntity } from "../task/task.entity";
 import { CoreEntity } from "../core.entity";
-import { Role } from "../../common";
 
 @Entity({ name: "user" })
 export class UserEntity extends CoreEntity implements User {
@@ -15,9 +14,6 @@ export class UserEntity extends CoreEntity implements User {
 
   @Column({ name: "password", type: "varchar", nullable: false })
   password: string;
-
-  @Column({ name: "role", enum: Role, default: Role.GENERAL })
-  role: Role;
 
   @OneToMany(() => UserOrganizationEntity, (userOrg) => userOrg.user)
   userOrganizations: UserOrganizationEntity[];

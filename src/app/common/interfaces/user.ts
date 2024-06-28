@@ -6,7 +6,6 @@ export interface User {
   username: string;
   email: string;
   password: string;
-  role: string;
   userOrganizations?: UserOrganization[];
   tasks?: Task[];
   createdAt?: Date;

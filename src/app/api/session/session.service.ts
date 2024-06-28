@@ -3,6 +3,7 @@ import { SessionEntity } from "./session.entity";
 import jwt from "jsonwebtoken";
 import { config } from "../../config/configuration";
 import { ResponseError } from "../../common/utils/error.utils";
+import { SwitchOrgDto } from "./session.dto";
 
 class SessionService {
   constructor(
@@ -29,12 +30,12 @@ class SessionService {
     return { token };
   }
 
-  async switchOrganization(userId: number, organizationId: number) {
+  async switchOrganization(userId: number, switchOrgDto: SwitchOrgDto) {
     const session = await this.sessionRepository.findOne({
       where: { userId },
     });
     if (session && session.expiresAt > new Date(Date.now())) {
-      session.currentOrganizationId = organizationId;
+      session.currentOrganizationId = switchOrgDto.organizationId;
       await this.sessionRepository.save(session);
       return "Organization switched successfully";
     } else {

@@ -3,6 +3,7 @@ import { taskService } from "./task.service";
 import { AuthenticatedRequest } from "../../common/middleware/auth-middleware";
 import { UserEntity } from "../user/user.entity";
 import { OrganizationEntity } from "../organization/organization.entity";
+import { CreateTaskDto } from "./task.dto";
 
 class TaskController {
   getTasks(req: Request, res: Response, next: NextFunction) {
@@ -19,9 +20,8 @@ class TaskController {
     const user: UserEntity = (req as AuthenticatedRequest).user;
     const organization: OrganizationEntity = (req as AuthenticatedRequest)
       .organization;
-    const taskDto = { ...req.body, assignedTo: user, organization };
     taskService
-      .createTask(taskDto)
+      .createTask(req.body, user, organization)
       .then((result) => res.success("Task Created Successfully", result))
       .catch(next);
   }

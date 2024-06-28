@@ -10,9 +10,8 @@ class UserController {
   }
 
   login(req: Request, res: Response, next: NextFunction) {
-    const { email, password } = req.body;
     userService
-      .login(email, password)
+      .login(req.body)
       .then((result) => res.success("Logged in Successfully", result))
       .catch(next);
   }

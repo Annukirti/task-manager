@@ -3,6 +3,11 @@ import { ResponseError } from "../../common/utils/error.utils";
 import { AppDataSource } from "../../database/datasource";
 import { UserOrganizationEntity } from "../user/user-organization.entity";
 import { UserEntity } from "../user/user.entity";
+import {
+  AddUserToOrganizationDto,
+  CreateOrganizationDto,
+  UpdateOrganizationDto,
+} from "./organization.dto";
 import { OrganizationEntity } from "./organization.entity";
 
 class OrganizationService {
@@ -26,7 +31,10 @@ class OrganizationService {
     return await this.organizationRepository.findBy({ id });
   }
 
-  async createOrganization(createOrganizationDto, user: UserEntity) {
+  async createOrganization(
+    createOrganizationDto: CreateOrganizationDto,
+    user: UserEntity
+  ) {
     const data = {
       name: createOrganizationDto.name,
       location: createOrganizationDto.location,
@@ -38,7 +46,7 @@ class OrganizationService {
   async addUserToOrganization(
     orgId: number,
     user: UserEntity,
-    userToAdd: number
+    userToAdd: AddUserToOrganizationDto
   ) {
     const userOrganization = user.userOrganizations.find(
       (org) => org.organizationId === orgId
@@ -48,7 +56,7 @@ class OrganizationService {
       return Promise.reject(new ResponseError(401, "Unauthorized", 4011));
     }
     return await this.userOrganizationRepository.save({
-      userId: userToAdd,
+      userId: userToAdd.userId,
       organizationId: orgId,
     });
   }
@@ -56,7 +64,7 @@ class OrganizationService {
   async updateOrganizationById(
     user: UserEntity,
     orgId: number,
-    updateOrganizationDto: Partial<OrganizationEntity>
+    updateOrganizationDto: UpdateOrganizationDto
   ) {
     const userOrganization = user.userOrganizations.find(
       (org) => org.organizationId === orgId

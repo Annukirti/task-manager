@@ -1,6 +1,7 @@
 import { AppDataSource } from "../../database/datasource";
 import { OrganizationEntity } from "../organization/organization.entity";
 import { UserEntity } from "../user/user.entity";
+import { CreateTaskDto, UpdateTaskDto } from "./task.dto";
 import { TaskEntity } from "./task.entity";
 
 class TaskService {
@@ -8,8 +9,16 @@ class TaskService {
     private taskRepository = AppDataSource.getRepository(TaskEntity)
   ) {}
 
-  async createTask(taskDto: TaskEntity) {
-    return await this.taskRepository.save(taskDto);
+  async createTask(
+    taskDto: CreateTaskDto,
+    assignedTo: UserEntity,
+    organization: OrganizationEntity
+  ) {
+    return await this.taskRepository.save({
+      ...taskDto,
+      assignedTo,
+      organization,
+    });
   }
 
   async getTasks(user: UserEntity, organization: OrganizationEntity) {
@@ -22,7 +31,7 @@ class TaskService {
     return await this.taskRepository.findBy({ id });
   }
 
-  async updateTaskById(id: number, updateTaskDto) {
+  async updateTaskById(id: number, updateTaskDto: UpdateTaskDto) {
     return await this.taskRepository.update({ id }, updateTaskDto);
   }
 

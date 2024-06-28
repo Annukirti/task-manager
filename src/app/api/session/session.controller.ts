@@ -19,10 +19,9 @@ class SessionController {
   }
 
   async switchOrganization(req: Request, res: Response, next: NextFunction) {
-    const { organizationId } = req.body;
     const userId = +req.params.id;
     sessionService
-      .switchOrganization(userId, organizationId)
+      .switchOrganization(userId, req.body)
       .then((result) =>
         res.success("Organization switched Successfully", result)
       )

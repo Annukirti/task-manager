@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { organizationService } from "./organization.service";
 import { AuthenticatedRequest } from "../../common/middleware/auth-middleware";
+import { AddUserToOrganizationDto } from "./organization.dto";
 
 class OrganizationController {
   getOrganizations(req: Request, res: Response, next: NextFunction) {
@@ -36,9 +37,8 @@ class OrganizationController {
   addUserToOrganization(req: Request, res: Response, next: NextFunction) {
     let orgId = +req.params.id;
     const user = (req as AuthenticatedRequest).user;
-    const userToAdd = req.body.userId;
     organizationService
-      .addUserToOrganization(orgId, user, userToAdd)
+      .addUserToOrganization(orgId, user, req.body)
       .then((result) =>
         res.success("User added in organization Successfully", result)
       )

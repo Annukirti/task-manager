@@ -9,4 +9,6 @@ export interface User {
   role: string;
   userOrganizations?: UserOrganization[];
   tasks?: Task[];
+  createdAt?: Date;
+  updatedAt?: Date;
 }

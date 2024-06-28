@@ -1,23 +1,15 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  JoinColumn,
-} from "typeorm";
+import { Entity, Column, ManyToOne, JoinColumn } from "typeorm";
 import { Task } from "../../common/interfaces";
 import { OrganizationEntity } from "../organization/organization.entity";
 import { UserEntity } from "../user/user.entity";
+import { CoreEntity } from "../core.entity";
 
 @Entity({ name: "task" })
-export class TaskEntity implements Task {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
+export class TaskEntity extends CoreEntity implements Task {
+  @Column({ name: "title", type: "varchar", nullable: false })
   title: string;
 
-  @Column()
+  @Column({ name: "description", type: "varchar", nullable: false })
   description: string;
 
   @ManyToOne(() => OrganizationEntity, (organization) => organization.tasks)

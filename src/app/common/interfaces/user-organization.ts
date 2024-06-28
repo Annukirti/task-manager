@@ -7,4 +7,6 @@ export interface UserOrganization {
   userId: number;
   organization: Organization;
   organizationId: number;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

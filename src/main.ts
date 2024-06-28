@@ -10,20 +10,16 @@ const app = express();
 
 const port: number = config.server.port;
 
-app.use(apiMiddleware);
-
-AppDataSource.initialize()
-  .then(() => {
-    console.log("Connected to the database");
-  })
-  .catch((error) => console.log(error));
-
-app.use(express.json());
 app.use(bodyParser.json());
+app.use(express.json());
+
+// Custom Middleware
+app.use(apiMiddleware);
 
 // Routes
 app.use(`/${config.server.apiPrefix}`, apiRouter);
 
+// Error Handling Middleware
 app.use(
   (
     err: ResponseError,
@@ -35,12 +31,19 @@ app.use(
   }
 );
 
+// 404 Handling Middleware
 app.use((req: express.Request, res: express.Response) => {
   res.status(404).json({ message: "Not Found" });
 });
 
-app.listen(port, () => {
-  console.log(
-    `Server is running on http://localhost:${port}/${config.server.apiPrefix}`
-  );
-});
+// Initialize Database and Start Server
+AppDataSource.initialize()
+  .then(() => {
+    console.log("Connected to the database");
+    app.listen(port, () => {
+      console.log(
+        `Server is running on http://localhost:${port}/${config.server.apiPrefix}`
+      );
+    });
+  })
+  .catch((error) => console.log(error));

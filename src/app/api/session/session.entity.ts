@@ -4,7 +4,7 @@ import { OrganizationEntity } from "../organization/organization.entity";
 import { Session } from "../../common";
 import { CoreEntity } from "../core.entity";
 
-@Entity()
+@Entity({ name: "session" })
 export class SessionEntity extends CoreEntity implements Session {
   @Column({ name: "user_id", type: "bigint", nullable: true })
   userId?: number;

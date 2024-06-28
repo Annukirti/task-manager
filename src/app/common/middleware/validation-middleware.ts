@@ -11,7 +11,7 @@ export const validateDto = (dtoClass: any) => {
         const dtoErrors = errors.map((error) =>
           Object.values(error.constraints ?? {}).join(", ")
         );
-        res.status(400).json({ errors: dtoErrors });
+        res.status(400).json({ errors: dtoErrors[0] });
       } else {
         next();
       }

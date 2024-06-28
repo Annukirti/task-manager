@@ -23,10 +23,15 @@ export const authenticate = async (
   }
 
   try {
+    console.log("dada");
     const decoded = jwt.verify(token, config.jwt.secret) as any;
+    console.log("papa");
     const sessionRepository = AppDataSource.getRepository(SessionEntity);
     const session = await sessionRepository.findOne({ where: { token } });
+    console.log("beta");
     if (!session || session.expiresAt < new Date(Date.now())) {
+      console.log("expired");
+
       return Promise.reject(new ResponseError(401, "Session expired", 4011));
     }
     const user = await AppDataSource.getRepository(UserEntity).findOne({
@@ -38,6 +43,6 @@ export const authenticate = async (
     (req as AuthenticatedRequest).organization = session.currentOrganization;
     next();
   } catch (error: any) {
-    res.status(401).send(`Invalid token: ${error}`);
+    res.status(401).json({ message: error.message });
   }
 };

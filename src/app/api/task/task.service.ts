@@ -1,4 +1,6 @@
 import { AppDataSource } from "../../database/datasource";
+import { OrganizationEntity } from "../organization/organization.entity";
+import { UserEntity } from "../user/user.entity";
 import { TaskEntity } from "./task.entity";
 
 class TaskService {
@@ -6,12 +8,14 @@ class TaskService {
     private taskRepository = AppDataSource.getRepository(TaskEntity)
   ) {}
 
-  async createTask(taskDto) {
+  async createTask(taskDto: TaskEntity) {
     return await this.taskRepository.save(taskDto);
   }
 
-  async getTasks() {
-    return await this.taskRepository.find();
+  async getTasks(user: UserEntity, organization: OrganizationEntity) {
+    return await this.taskRepository.find({
+      where: { assignedTo: user, organization },
+    });
   }
 
   async getTaskById(id: number) {

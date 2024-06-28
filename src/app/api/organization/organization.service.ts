@@ -1,3 +1,5 @@
+import { Role } from "../../common";
+import { ResponseError } from "../../common/utils/error.utils";
 import { AppDataSource } from "../../database/datasource";
 import { UserOrganizationEntity } from "../user/user-organization.entity";
 import { UserEntity } from "../user/user.entity";
@@ -13,38 +15,73 @@ class OrganizationService {
     )
   ) {}
 
-  async getOrganizations() {
-    await this.organizationRepository.find();
+  async getOrganizations(user: UserEntity) {
+    return await this.userOrganizationRepository.find({
+      where: { user },
+      relations: { organization: true },
+    });
   }
 
-  async getOrganizationById(id) {
-    await this.organizationRepository.findBy(id);
+  async getOrganizationById(id: number) {
+    return await this.organizationRepository.findBy({ id });
   }
 
-  async createOrganization(createOrganizationDto) {
+  async createOrganization(createOrganizationDto, user: UserEntity) {
     const data = {
       name: createOrganizationDto.name,
-      userOrganizations: [{ userId: createOrganizationDto.userId }],
+      location: createOrganizationDto.location,
+      userOrganizations: [{ role: Role.ADMIN, user: user }],
     };
-    await this.organizationRepository.save(data);
+    return await this.organizationRepository.save(data);
   }
 
-  async addUserToOrganization(orgId, userId) {
-    await this.userOrganizationRepository.save({
-      userId,
+  async addUserToOrganization(
+    orgId: number,
+    user: UserEntity,
+    userToAdd: number
+  ) {
+    const userOrganization = user.userOrganizations.find(
+      (org) => org.organizationId === orgId
+    );
+
+    if (userOrganization.role !== Role.ADMIN) {
+      return Promise.reject(new ResponseError(401, "Unauthorized", 4011));
+    }
+    return await this.userOrganizationRepository.save({
+      userId: userToAdd,
       organizationId: orgId,
     });
   }
 
   async updateOrganizationById(
-    id: number,
+    user: UserEntity,
+    orgId: number,
     updateOrganizationDto: Partial<OrganizationEntity>
   ) {
-    await this.organizationRepository.update(id, updateOrganizationDto);
+    const userOrganization = user.userOrganizations.find(
+      (org) => org.organizationId === orgId
+    );
+
+    if (userOrganization.role !== Role.ADMIN) {
+      return Promise.reject(new ResponseError(401, "Unauthorized", 4011));
+    }
+
+    return await this.organizationRepository.update(
+      { id: orgId },
+      updateOrganizationDto
+    );
   }
 
-  async deleteOrganizationById(id: number) {
-    await this.organizationRepository.delete(id);
+  async deleteOrganizationById(id: number, user: UserEntity) {
+    const userOrganization = user.userOrganizations.find(
+      (org) => org.organizationId === id
+    );
+
+    if (userOrganization.role !== Role.ADMIN) {
+      return Promise.reject(new ResponseError(401, "Unauthorized", 4011));
+    }
+
+    return await this.organizationRepository.delete(id);
   }
 }
 

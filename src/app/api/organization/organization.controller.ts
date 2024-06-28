@@ -1,10 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import { organizationService } from "./organization.service";
+import { AuthenticatedRequest } from "../../common/middleware/auth-middleware";
 
 class OrganizationController {
   getOrganizations(req: Request, res: Response, next: NextFunction) {
+    const user = (req as AuthenticatedRequest).user;
     organizationService
-      .getOrganizations()
+      .getOrganizations(user)
       .then((result) =>
         res.success("Organizations fetched Successfully", result)
       )
@@ -13,8 +15,9 @@ class OrganizationController {
 
   createOrganization(req: Request, res: Response, next: NextFunction) {
     const createOrganizationDto = req.body;
+    const user = (req as AuthenticatedRequest).user;
     organizationService
-      .createOrganization(createOrganizationDto)
+      .createOrganization(createOrganizationDto, user)
       .then((result) =>
         res.success("Organizations created Successfully", result)
       )
@@ -32,9 +35,10 @@ class OrganizationController {
 
   addUserToOrganization(req: Request, res: Response, next: NextFunction) {
     let orgId = +req.params.id;
-    let userId = req.body;
+    const user = (req as AuthenticatedRequest).user;
+    const userToAdd = req.body.userId;
     organizationService
-      .addUserToOrganization(orgId, userId)
+      .addUserToOrganization(orgId, user, userToAdd)
       .then((result) =>
         res.success("User added in organization Successfully", result)
       )
@@ -43,8 +47,9 @@ class OrganizationController {
 
   updateOrganizationById(req: Request, res: Response, next: NextFunction) {
     const updateOrganizationDto = req.body;
+    const user = (req as AuthenticatedRequest).user;
     organizationService
-      .updateOrganizationById(+req.params.id, updateOrganizationDto)
+      .updateOrganizationById(user, +req.params.id, updateOrganizationDto)
       .then((result) =>
         res.success("Organization updated Successfully", result)
       )
@@ -52,8 +57,9 @@ class OrganizationController {
   }
 
   deleteOrganizationById(req: Request, res: Response, next: NextFunction) {
+    const user = (req as AuthenticatedRequest).user;
     organizationService
-      .deleteOrganizationById(+req.params.id)
+      .deleteOrganizationById(+req.params.id, user)
       .then((result) =>
         res.success("Organization deleted Successfully", result)
       )

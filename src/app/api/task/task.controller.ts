@@ -1,17 +1,27 @@
 import { Request, Response, NextFunction } from "express";
 import { taskService } from "./task.service";
+import { AuthenticatedRequest } from "../../common/middleware/auth-middleware";
+import { UserEntity } from "../user/user.entity";
+import { OrganizationEntity } from "../organization/organization.entity";
 
 class TaskController {
   getTasks(req: Request, res: Response, next: NextFunction) {
+    const user: UserEntity = (req as AuthenticatedRequest).user;
+    const organization: OrganizationEntity = (req as AuthenticatedRequest)
+      .organization;
     taskService
-      .getTasks()
+      .getTasks(user, organization)
       .then((result) => res.success("Tasks fetched Successfully", result))
       .catch(next);
   }
 
   createTask(req: Request, res: Response, next: NextFunction) {
+    const user: UserEntity = (req as AuthenticatedRequest).user;
+    const organization: OrganizationEntity = (req as AuthenticatedRequest)
+      .organization;
+    const taskDto = { ...req.body, assignedTo: user, organization };
     taskService
-      .createTask(req.body)
+      .createTask(taskDto)
       .then((result) => res.success("Task Created Successfully", result))
       .catch(next);
   }

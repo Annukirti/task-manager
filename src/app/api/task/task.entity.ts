@@ -9,7 +9,7 @@ export class TaskEntity extends CoreEntity implements Task {
   @Column({ name: "title", type: "varchar", nullable: false })
   title: string;
 
-  @Column({ name: "description", type: "varchar", nullable: false })
+  @Column({ name: "description", type: "varchar", nullable: true })
   description: string;
 
   @ManyToOne(() => OrganizationEntity, (organization) => organization.tasks)

@@ -5,9 +5,10 @@ import { AppDataSource } from "../../database/datasource";
 import { config } from "../../config/configuration";
 import { OrganizationEntity } from "../../api/organization/organization.entity";
 import { ResponseError } from "../utils/error.utils";
+import { UserEntity } from "../../api/user/user.entity";
 
-interface AuthenticatedRequest extends Request {
-  user?: number;
+export interface AuthenticatedRequest extends Request {
+  user?: UserEntity;
   organization?: OrganizationEntity;
 }
 
@@ -19,7 +20,6 @@ export const authenticate = async (
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) {
     return Promise.reject(new ResponseError(401, "Unauthorized", 4011));
-    // throw new Error("Unauthorized");
   }
 
   try {
@@ -28,9 +28,13 @@ export const authenticate = async (
     const session = await sessionRepository.findOne({ where: { token } });
     if (!session || session.expiresAt < new Date(Date.now())) {
       return Promise.reject(new ResponseError(401, "Session expired", 4011));
-      // throw new Error("Session expired");
     }
-    (req as AuthenticatedRequest).user = decoded.userId;
+    const user = await AppDataSource.getRepository(UserEntity).findOne({
+      where: { id: decoded.userId },
+      relations: { userOrganizations: true },
+    });
+
+    (req as AuthenticatedRequest).user = user;
     (req as AuthenticatedRequest).organization = session.currentOrganization;
     next();
   } catch (error: any) {

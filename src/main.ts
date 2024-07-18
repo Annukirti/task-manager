@@ -5,17 +5,46 @@ import { apiRouter } from "./app/api/api.module";
 import bodyParser from "body-parser";
 import { apiMiddleware } from "./app/common/middleware/api";
 import { ResponseError } from "./app/common/utils/error.utils";
+import * as swagger from "swagger-express-ts";
 
 const app = express();
 
 const port: number = config.server.port;
 
 app.use(bodyParser.json());
+
+function initSwagger() {
+  app.use("/api-docs/swagger", express.static("swagger"));
+  app.use(
+    "/api-docs/swagger/assets",
+    express.static("node_modules/swagger-ui-dist")
+  );
+
+  app.use(
+    swagger.express({
+      definition: {
+        info: {
+          title: "My api",
+          version: "2.0",
+        },
+        basePath: "/api",
+        schemes: ["http", "https"],
+        securityDefinitions: {
+          apiKeyHeader: {
+            type: "apiKey",
+            in: "header",
+            name: "authorization",
+          },
+        },
+      },
+    })
+  );
+}
 app.use(express.json());
 
 // Custom Middleware
 app.use(apiMiddleware);
-
+initSwagger();
 // Routes
 app.use(`/${config.server.apiPrefix}`, apiRouter);
 
@@ -41,9 +70,8 @@ AppDataSource.initialize()
   .then(() => {
     console.log("Connected to the database");
     app.listen(port, () => {
-      console.log(
-        `Server is running on http://localhost:${port}/${config.server.apiPrefix}`
-      );
+      console.log(`Server is running on http://localhost:${port}`);
+      console.log(`Swagger URL "http://localhost:${port}/api-docs/swagger`);
     });
   })
   .catch((error) => console.log(error));

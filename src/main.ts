@@ -27,7 +27,7 @@ function initSwagger() {
           title: "My api",
           version: "2.0",
         },
-        basePath: "/api",
+        basePath: `/${config.server.apiPrefix}`,
         schemes: ["http", "https"],
         securityDefinitions: {
           apiKeyHeader: {
@@ -70,8 +70,8 @@ AppDataSource.initialize()
   .then(() => {
     console.log("Connected to the database");
     app.listen(port, () => {
-      console.log(`Server is running on http://localhost:${port}`);
-      console.log(`Swagger URL "http://localhost:${port}/api-docs/swagger`);
+      console.log(`Server is running on ${config.server.url}${port}`);
+      console.log(`Swagger URL "${config.server.url}${port}/api-docs/swagger`);
     });
   })
   .catch((error) => console.log(error));

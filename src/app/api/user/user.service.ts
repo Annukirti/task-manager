@@ -1,7 +1,6 @@
 import { AppDataSource } from "../../database/datasource";
 import bcrypt from "bcryptjs";
 import { UserEntity } from "./user.entity";
-import { User } from "../../common";
 import { sessionService } from "../session/session.service";
 import { ResponseError } from "../../common/utils/error.utils";
 import { CreateUserDto, LoginDto, UpdateUserDto } from "./user.dto";

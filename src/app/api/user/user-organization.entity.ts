@@ -1,10 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  JoinColumn,
-  Column,
-} from "typeorm";
+import { Entity, ManyToOne, JoinColumn, Column } from "typeorm";
 import { UserEntity } from "./user.entity";
 import { UserOrganization } from "../../common/interfaces";
 import { OrganizationEntity } from "../organization/organization.entity";

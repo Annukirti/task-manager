@@ -66,14 +66,12 @@ class TaskController {
         id: {
           name: "id",
           required: true,
-          description: "ID of task to fetch",
           type: "number",
         },
       },
     },
     responses: {
       200: {
-        description: "Success",
         type: "String",
       },
     },

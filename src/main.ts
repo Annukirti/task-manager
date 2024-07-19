@@ -5,7 +5,7 @@ import { apiRouter } from "./app/api/api.module";
 import bodyParser from "body-parser";
 import { apiMiddleware } from "./app/common/middleware/api";
 import { ResponseError } from "./app/common/utils/error.utils";
-import * as swagger from "swagger-express-ts";
+import { initSwagger } from "./app/common/swagger";
 
 const app = express();
 
@@ -13,38 +13,12 @@ const port: number = config.server.port;
 
 app.use(bodyParser.json());
 
-function initSwagger() {
-  app.use("/api-docs/swagger", express.static("swagger"));
-  app.use(
-    "/api-docs/swagger/assets",
-    express.static("node_modules/swagger-ui-dist")
-  );
-
-  app.use(
-    swagger.express({
-      definition: {
-        info: {
-          title: "My api",
-          version: "2.0",
-        },
-        basePath: `/${config.server.apiPrefix}`,
-        schemes: ["http", "https"],
-        securityDefinitions: {
-          apiKeyHeader: {
-            type: "apiKey",
-            in: "header",
-            name: "authorization",
-          },
-        },
-      },
-    })
-  );
-}
 app.use(express.json());
 
 // Custom Middleware
 app.use(apiMiddleware);
-initSwagger();
+// Swagger
+initSwagger(app);
 // Routes
 app.use(`/${config.server.apiPrefix}`, apiRouter);
 

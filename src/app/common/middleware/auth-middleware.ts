@@ -38,6 +38,6 @@ export const authenticate = async (
     (req as AuthenticatedRequest).organization = session.currentOrganization;
     next();
   } catch (error: any) {
-    res.status(401).json({ message: error.message });
+    return Promise.reject(new ResponseError(401, error, 4011));
   }
 };

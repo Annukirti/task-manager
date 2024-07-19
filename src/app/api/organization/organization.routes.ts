@@ -6,31 +6,39 @@ import {
   CreateOrganizationDto,
   UpdateOrganizationDto,
 } from "./organization.dto";
+import { authenticate } from "../../common/middleware/auth-middleware";
 
 const router: Router = Router();
 
-router.get("/", organizationController.getOrganizations);
+router.get("/", authenticate, organizationController.getOrganizations);
 
-router.get("/:id", organizationController.getOrganizationById);
+router.get("/:id", authenticate, organizationController.getOrganizationById);
 
 router.post(
   "",
+  authenticate,
   validateDto(CreateOrganizationDto),
   organizationController.createOrganization
 );
 
 router.post(
   "/:id",
+  authenticate,
   validateDto(AddUserToOrganizationDto),
   organizationController.addUserToOrganization
 );
 
 router.put(
   "/:id",
+  authenticate,
   validateDto(UpdateOrganizationDto),
   organizationController.updateOrganizationById
 );
 
-router.delete("/:id", organizationController.deleteOrganizationById);
+router.delete(
+  "/:id",
+  authenticate,
+  organizationController.deleteOrganizationById
+);
 
 export const organizationRoutes = router;

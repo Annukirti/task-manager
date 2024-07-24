@@ -1,5 +1,5 @@
 import * as swagger from "swagger-express-ts";
-import { config } from "../config/configuration";
+import { config } from "../../config/configuration";
 import express from "express";
 import { Express } from "express";
 

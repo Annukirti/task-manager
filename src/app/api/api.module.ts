@@ -3,7 +3,7 @@ import { userRoutes } from "./user/user.routes";
 import { taskRoutes } from "./task/task.routes";
 import { organizationRoutes } from "./organization/organization.routes";
 import { sessionRoutes } from "./session/session.routes";
-import { authenticate } from "../common/middleware/auth-middleware";
+import { authenticate } from "../common";
 
 const router: Router = Router();
 

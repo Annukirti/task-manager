@@ -3,11 +3,15 @@ import { AppDataSource } from "./app/database/datasource";
 import { config } from "./app/config/configuration";
 import { apiRouter } from "./app/api/api.module";
 import bodyParser from "body-parser";
-import { apiMiddleware } from "./app/common/middleware/api";
-import { ResponseError } from "./app/common/utils/error.utils";
-import { initSwagger } from "./app/common/swagger";
-
+import {
+  apiMiddleware,
+  morganMiddleware,
+  initSwagger,
+  Logger,
+  ResponseError,
+} from "./app/common";
 const app = express();
+app.use(morganMiddleware);
 
 const port: number = config.server.port;
 
@@ -30,6 +34,7 @@ app.use(
     res: express.Response,
     next: express.NextFunction
   ) => {
+    Logger.error(err.message);
     res.status(err.status || 400).json({ message: err.message });
   }
 );
@@ -42,10 +47,10 @@ app.use((req: express.Request, res: express.Response) => {
 // Initialize Database and Start Server
 AppDataSource.initialize()
   .then(() => {
-    console.log("Connected to the database");
+    Logger.info("Connected to the database");
     app.listen(port, () => {
-      console.log(`Server is running on ${config.server.url}${port}`);
-      console.log(`Swagger URL "${config.server.url}${port}/api-docs/swagger`);
+      Logger.info(`Server is running on ${config.server.url}${port}`);
+      Logger.info(`Swagger URL "${config.server.url}${port}/api-docs/swagger`);
     });
   })
-  .catch((error) => console.log(error));
+  .catch((error) => Logger.error(error));

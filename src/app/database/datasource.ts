@@ -10,7 +10,7 @@ export const AppDataSource = new DataSource({
   password: config.database.password || "admin",
   database: config.database.database || "task-manager-db",
   synchronize: true,
-  logging: true,
+  logging: config.server.env === "development" ? true : false,
   entities: [join(__dirname, "../api/**/*.entity{.ts,.js}")],
   subscribers: [],
   migrations: [],

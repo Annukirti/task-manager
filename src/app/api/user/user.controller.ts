@@ -58,6 +58,22 @@ class UserController {
       .catch(next);
   }
 
+  @ApiOperationPost({
+    description: "Logout user",
+    summary: "Logout existing user",
+    path: "/logout",
+    responses: {
+      200: { description: "Success" },
+      400: { description: "Parameters fail" },
+    },
+  })
+  logout(req: Request, res: Response, next: NextFunction) {
+    userService
+      .logout(req)
+      .then(() => res.success("Logged out Successfully"))
+      .catch(next);
+  }
+
   @ApiOperationGet({
     description: "Get all users",
     summary: "Get all users",
@@ -166,6 +182,54 @@ class UserController {
     userService
       .deleteUserById(+req.params.id)
       .then((result) => res.success("User deleted Successfully", result))
+      .catch(next);
+  }
+
+  @ApiOperationPost({
+    description: "Forgot Password",
+    summary: "Forgot the App Password",
+    path: "/forgot-password",
+    parameters: {
+      body: {
+        description: "Forgot Password DTO",
+        required: true,
+        model: "ForgotPasswordDto",
+      },
+    },
+    responses: {
+      200: { description: "Success" },
+      400: { description: "Parameters fail" },
+    },
+  })
+  forgotPassword(req: Request, res: Response, next: NextFunction) {
+    userService
+      .forgotPassword(req.body)
+      .then((result) =>
+        res.success("Password reset link sent to your email account", result)
+      )
+      .catch(next);
+  }
+
+  @ApiOperationPost({
+    description: "Reset Password",
+    summary: "Reset the App Password",
+    path: "/reset-password",
+    parameters: {
+      body: {
+        description: "Reset Password DTO",
+        required: true,
+        model: "ResetPasswordDto",
+      },
+    },
+    responses: {
+      200: { description: "Success" },
+      400: { description: "Parameters fail" },
+    },
+  })
+  resetPassword(req: Request, res: Response, next: NextFunction) {
+    userService
+      .resetPassword(req.body)
+      .then(() => res.success("Password Reset Successfully. Please login."))
       .catch(next);
   }
 }

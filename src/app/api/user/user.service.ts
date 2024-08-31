@@ -3,7 +3,17 @@ import bcrypt from "bcryptjs";
 import { UserEntity } from "./user.entity";
 import { sessionService } from "../session/session.service";
 import { ResponseError } from "../../common/utils/error.utils";
-import { CreateUserDto, LoginDto, UpdateUserDto } from "./user.dto";
+import {
+  CreateUserDto,
+  ForgotPasswordDto,
+  LoginDto,
+  ResetPasswordDto,
+  UpdateUserDto,
+} from "./user.dto";
+import { Request } from "express";
+import { AuthenticatedRequest } from "../../common";
+import jwt from "jsonwebtoken";
+import { config } from "../../config/configuration";
 
 class UserService {
   constructor(
@@ -40,6 +50,11 @@ class UserService {
     }
   }
 
+  async logout(req: Request) {
+    const user = (req as AuthenticatedRequest).user;
+    return await sessionService.deleteUserSessions(user.id);
+  }
+
   async getUsers() {
     return await this.userRepository.find({});
   }
@@ -54,6 +69,42 @@ class UserService {
 
   async deleteUserById(id: number) {
     return await this.userRepository.delete({ id });
+  }
+
+  async forgotPassword(forgotPasswordDto: ForgotPasswordDto) {
+    const { email } = forgotPasswordDto;
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) {
+      return Promise.reject(new ResponseError(400, "User Not Found."));
+    }
+    await this.deleteUserById(user.id);
+    const token = await sessionService.createSession(user.id);
+
+    // TODO: Send token on user's email
+    return token;
+  }
+
+  async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<void> {
+    const { token, newPassword } = resetPasswordDto;
+    const decoded = jwt.verify(token, config.jwt.secret) as any;
+    if (!decoded) {
+      return Promise.reject(
+        new ResponseError(400, "Invalid or expired token", 4001)
+      );
+    }
+    const user = await this.userRepository.findOne({
+      where: { id: decoded.userId },
+    });
+    if (!user) {
+      return Promise.reject(new ResponseError(400, "User Not Found."));
+    }
+    const tokenExist = await sessionService.getSessionByToken(token);
+    if (!tokenExist) {
+      return Promise.reject(new ResponseError(400, "Unauthorized."));
+    }
+    await this.updateUserById(user.id, { password: newPassword });
+    await sessionService.deleteUserSessions(user.id);
+    // TODO: Send email of reset password
   }
 }
 

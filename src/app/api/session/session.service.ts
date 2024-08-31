@@ -17,6 +17,13 @@ class SessionService {
     return session;
   }
 
+  async getSessionByToken(token: string) {
+    const session = await this.sessionRepository.findOne({
+      where: { token },
+    });
+    return session;
+  }
+
   async createSession(userId: number, organizationId?: number) {
     const token = jwt.sign({ userId }, config.jwt.secret, {
       expiresIn: config.jwt.expiresTime,
@@ -44,7 +51,7 @@ class SessionService {
   }
 
   async deleteUserSessions(userId: number) {
-    await AppDataSource.getRepository(SessionEntity).delete({
+    await this.sessionRepository.delete({
       userId,
     });
     return "Session Deleted successfully";

@@ -62,6 +62,8 @@ class UserController {
     description: "Logout user",
     summary: "Logout existing user",
     path: "/logout",
+    security: { apiKeyHeader: [] },
+    parameters: {},
     responses: {
       200: { description: "Success" },
       400: { description: "Parameters fail" },
@@ -205,7 +207,7 @@ class UserController {
     userService
       .forgotPassword(req.body)
       .then((result) =>
-        res.success("Password reset link sent to your email account", result)
+        res.success("Password reset link sent to your email account")
       )
       .catch(next);
   }

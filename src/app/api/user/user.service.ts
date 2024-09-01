@@ -14,6 +14,11 @@ import { Request } from "express";
 import { AuthenticatedRequest } from "../../common";
 import jwt from "jsonwebtoken";
 import { config } from "../../config/configuration";
+import {
+  registerHandlebars,
+  sendEmail,
+} from "../../common/email/email.service";
+import { UserNotificationEvents } from "./user.notification.events";
 
 class UserService {
   constructor(
@@ -71,17 +76,22 @@ class UserService {
     return await this.userRepository.delete({ id });
   }
 
-  async forgotPassword(forgotPasswordDto: ForgotPasswordDto) {
+  async forgotPassword(forgotPasswordDto: ForgotPasswordDto): Promise<void> {
     const { email } = forgotPasswordDto;
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user) {
       return Promise.reject(new ResponseError(400, "User Not Found."));
     }
-    await this.deleteUserById(user.id);
+    await sessionService.deleteUserSessions(user.id);
     const token = await sessionService.createSession(user.id);
-
-    // TODO: Send token on user's email
-    return token;
+    await sendEmail({
+      to: email,
+      subject: "Reset Password Request",
+      html: registerHandlebars(
+        UserNotificationEvents.USER_FORGOT_PASSWORD,
+        token
+      ),
+    });
   }
 
   async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<void> {
@@ -102,9 +112,15 @@ class UserService {
     if (!tokenExist) {
       return Promise.reject(new ResponseError(400, "Unauthorized."));
     }
-    await this.updateUserById(user.id, { password: newPassword });
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await this.updateUserById(user.id, { password: hashedPassword });
     await sessionService.deleteUserSessions(user.id);
-    // TODO: Send email of reset password
+    await sendEmail({
+      to: user.email,
+      subject: "Reset Password Succeeded",
+      html: registerHandlebars(UserNotificationEvents.USER_PASSWORD_RESET),
+    });
   }
 }
 

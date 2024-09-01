@@ -19,7 +19,7 @@ export const authenticate = async (
 ): Promise<void> => {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) {
-    return Promise.reject(new ResponseError(401, "Unauthorized", 4011));
+    return next(new ResponseError(401, "Unauthorized", 4011));
   }
 
   try {
@@ -27,7 +27,7 @@ export const authenticate = async (
     const sessionRepository = AppDataSource.getRepository(SessionEntity);
     const session = await sessionRepository.findOne({ where: { token } });
     if (!session || session.expiresAt < new Date(Date.now())) {
-      return Promise.reject(new ResponseError(401, "Session expired", 4011));
+      return next(new ResponseError(401, "Session expired", 4011));
     }
     const user = await AppDataSource.getRepository(UserEntity).findOne({
       where: { id: decoded.userId },
@@ -37,7 +37,7 @@ export const authenticate = async (
     (req as AuthenticatedRequest).user = user;
     (req as AuthenticatedRequest).organization = session.currentOrganization;
     next();
-  } catch (error: any) {
-    return Promise.reject(new ResponseError(401, error, 4011));
+  } catch (err: any) {
+    return next(new ResponseError(401, err.message, 4011));
   }
 };

@@ -99,3 +99,43 @@ export class UpdateUserDto {
   })
   password?: string;
 }
+
+@ApiModel({
+  description: "Forgot Password",
+  name: "ForgotPasswordDto",
+})
+export class ForgotPasswordDto {
+  @IsEmail()
+  @IsNotEmpty()
+  @ApiModelProperty({
+    description: "email",
+    required: true,
+    example: "abc@mail.com",
+  })
+  email: string;
+}
+
+@ApiModel({
+  description: "Reset Password",
+  name: "ResetPasswordDto",
+})
+export class ResetPasswordDto {
+  @IsString()
+  @MinLength(6)
+  @IsNotEmpty()
+  @ApiModelProperty({
+    description: "token",
+    required: true,
+  })
+  token?: string;
+
+  @IsString()
+  @MinLength(6)
+  @IsNotEmpty()
+  @ApiModelProperty({
+    description: "newPassword",
+    required: true,
+    example: "abc@133",
+  })
+  newPassword: string;
+}

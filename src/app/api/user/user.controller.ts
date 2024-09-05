@@ -241,6 +241,7 @@ class UserController {
     description: "Change Password",
     summary: "Change the App Password",
     path: "/change-password",
+    security: { apiKeyHeader: [] },
     parameters: {
       body: {
         description: "Change Password DTO",

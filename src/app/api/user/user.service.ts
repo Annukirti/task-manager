@@ -132,13 +132,14 @@ class UserService {
     const { currentPassword, newPassword } = updatePasswordDto;
     if (currentPassword !== newPassword) {
       const checkPassword = await bcrypt.compare(
-        user.password,
-        currentPassword
+        currentPassword,
+        user.password
       );
       if (checkPassword) {
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
         await this.userRepository.update(
           { id: user.id },
-          { password: newPassword }
+          { password: hashedPassword }
         );
         await sessionService.deleteUserSessions(user.id);
         await sendEmail({

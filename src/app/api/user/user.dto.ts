@@ -139,3 +139,29 @@ export class ResetPasswordDto {
   })
   newPassword: string;
 }
+
+@ApiModel({
+  description: "Change Password",
+  name: "ChangePasswordDto",
+})
+export class ChangePasswordDto {
+  @IsString()
+  @MinLength(6)
+  @IsNotEmpty()
+  @ApiModelProperty({
+    description: "currentPassword",
+    required: true,
+    example: "abc@133",
+  })
+  currentPassword?: string;
+
+  @IsString()
+  @MinLength(6)
+  @IsNotEmpty()
+  @ApiModelProperty({
+    description: "newPassword",
+    required: true,
+    example: "abc@133",
+  })
+  newPassword: string;
+}

@@ -3,6 +3,7 @@ import { userController } from "./user.controller";
 import { authenticate } from "../../common/middleware/auth-middleware";
 import { validateDto } from "../../common/middleware/validation-middleware";
 import {
+  ChangePasswordDto,
   CreateUserDto,
   ForgotPasswordDto,
   LoginDto,
@@ -41,6 +42,13 @@ router.post(
   "/reset-password",
   validateDto(ResetPasswordDto),
   userController.resetPassword
+);
+
+router.post(
+  "/change-password",
+  authenticate,
+  validateDto(ChangePasswordDto),
+  userController.changePassword
 );
 
 export const userRoutes = router;

@@ -20,6 +20,7 @@ import {
   sendEmail,
 } from "../../common/email/email.service";
 import { UserNotificationEvents } from "./user.notification.events";
+import { transformUser } from "../../common/utils/response.utils";
 
 class UserService {
   constructor(
@@ -62,11 +63,15 @@ class UserService {
   }
 
   async getUsers() {
-    return await this.userRepository.find({});
+    const users = await this.userRepository.find({});
+    const transformedUsers = transformUser(users, UserEntity);
+    return transformedUsers;
   }
 
   async getUserById(id: number) {
-    return await this.userRepository.findBy({ id });
+    const user = await this.userRepository.findBy({ id });
+    const transformedUsers = transformUser(user, UserEntity);
+    return transformedUsers;
   }
 
   async updateUserById(id: number, updateUserDto: UpdateUserDto) {

@@ -8,6 +8,7 @@ import {
   ForgotPasswordDto,
   LoginDto,
   ResetPasswordDto,
+  ChangePasswordDto,
   UpdateUserDto,
 } from "./user.dto";
 import { Request } from "express";
@@ -73,6 +74,7 @@ class UserService {
   }
 
   async deleteUserById(id: number) {
+    await sessionService.deleteUserSessions(id);
     return await this.userRepository.delete({ id });
   }
 
@@ -121,6 +123,49 @@ class UserService {
       subject: "Reset Password Succeeded",
       html: registerHandlebars(UserNotificationEvents.USER_PASSWORD_RESET),
     });
+  }
+
+  async changePassword(
+    user: UserEntity,
+    updatePasswordDto: ChangePasswordDto
+  ): Promise<void> {
+    const { currentPassword, newPassword } = updatePasswordDto;
+    if (currentPassword !== newPassword) {
+      const checkPassword = await bcrypt.compare(
+        user.password,
+        currentPassword
+      );
+      if (checkPassword) {
+        await this.userRepository.update(
+          { id: user.id },
+          { password: newPassword }
+        );
+        await sessionService.deleteUserSessions(user.id);
+        await sendEmail({
+          to: user.email,
+          subject: "Password Changed Succeeded",
+          html: registerHandlebars(
+            UserNotificationEvents.USER_PASSWORD_CHANGED
+          ),
+        });
+      } else {
+        return Promise.reject(
+          new ResponseError(
+            400,
+            "Current Password doesn't match the old Password",
+            4001
+          )
+        );
+      }
+    } else {
+      return Promise.reject(
+        new ResponseError(
+          400,
+          "Current Password can't be same with the new Password",
+          4001
+        )
+      );
+    }
   }
 }
 

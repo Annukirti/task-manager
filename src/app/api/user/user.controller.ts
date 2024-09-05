@@ -7,6 +7,8 @@ import {
   ApiOperationPut,
   ApiPath,
 } from "swagger-express-ts";
+import { UserEntity } from "./user.entity";
+import { AuthenticatedRequest } from "../../common";
 
 @ApiPath({
   path: "/user",
@@ -232,6 +234,30 @@ class UserController {
     userService
       .resetPassword(req.body)
       .then(() => res.success("Password Reset Successfully. Please login."))
+      .catch(next);
+  }
+
+  @ApiOperationPost({
+    description: "Change Password",
+    summary: "Change the App Password",
+    path: "/change-password",
+    parameters: {
+      body: {
+        description: "Change Password DTO",
+        required: true,
+        model: "ChangePasswordDto",
+      },
+    },
+    responses: {
+      200: { description: "Success" },
+      400: { description: "Parameters fail" },
+    },
+  })
+  async changePassword(req: Request, res: Response, next: NextFunction) {
+    const user: UserEntity = (req as AuthenticatedRequest).user;
+    await userService
+      .changePassword(user, req.body)
+      .then(() => res.success("Password Updated Successfully. Please login."))
       .catch(next);
   }
 }
